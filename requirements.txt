@@ -1,0 +1,6 @@
+streamlit
+Wav2Lipy
+torch
+opencv-python
+librosa
+moviepy
