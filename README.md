@@ -1,63 +1,68 @@
 
-# 🔊 Audio Replacement with Lip Sync
-
-This project takes a short video of a person speaking and replaces the original audio with a new voice recording, modifying the lip movements to match the new speech using the Wav2Lip model.
-
----
+# Audio Replacement with Lip Sync
 
 ## 🎯 Objective
 
-Given:
-- `input_video.mp4`: A 10–15 sec video of someone speaking Paragraph A.
-- `new_audio.wav`: A separate audio recording of Paragraph B.
+This project takes a short video of a person speaking (Paragraph A), replaces the original audio with a different audio (Paragraph B), and modifies the video to ensure the lip movements match the new speech — producing a natural-looking result.
 
-The system outputs:
-- `output_video.mp4`: A realistic video where the original voice is replaced and lip movements are synced with `new_audio.wav`.
+### ✅ Input:
+- `input_video.mp4` — Original 10–15s video of you speaking Paragraph A.
+- `new_audio.wav` — Audio file of you speaking Paragraph B.
 
----
-
-## 📁 Folder Structure
-
-```
-lip-sync-project/
-├── Wav2Lip/                   # Contains inference.py, audio.py, and checkpoints
-├── input_video.mp4            # Original input video (Paragraph A)
-├── new_audio.wav              # New audio file (Paragraph B)
-├── output_video.mp4           # Final generated output
-├── wav2lipenv/                # Virtual environment
-├── lip_sync_pipeline.py       # (Optional) Custom pipeline if you write your own
-└── README.md
-```
+### ✅ Output:
+- `output_video.mp4` — Modified video where:
+  - Lip movements match `new_audio.wav`.
+  - Head pose, lighting, identity remain consistent.
 
 ---
 
-## 🧰 Dependencies
+## ⚙️ Installation
 
-Create a virtual environment and install dependencies:
+### 1. Clone the Wav2Lip Repository
+We clone the [original Wav2Lip repo](https://github.com/Rudrabha/Wav2Lip) because:
+- It includes custom scripts like `inference.py` and `audio.py`.
+- The open-source Python package `wav2lipy` has unresolved dependency issues (e.g. incompatible `torch==1.1.0`) and lacks the GAN-based improvements available in the full repo.
 
 ```bash
+git clone https://github.com/Rudrabha/Wav2Lip.git
+```
+
+### 2. Download Pretrained Checkpoint
+
+Place the checkpoint file `wav2lip_gan.pth` inside `Wav2Lip/checkpoints/`.
+
+Download here: [Google Drive Link](https://drive.google.com/file/d/1lwNfovr1_ZzA1J1McM5DdMzGY3qNr6dR/view)
+
+---
+
+## 🐍 Python Environment Setup
+
+### Windows Steps:
+
+```bash
+# Navigate to project root
+cd path\to\lip-sync-project
+
 # Create virtual environment
 python -m venv wav2lipenv
 
-# Activate (Windows CMD)
+# Activate the environment
 wav2lipenv\Scripts\activate
+```
 
-# OR PowerShell
-.\wav2lipenv\Scripts\Activate.ps1
+### Install dependencies:
 
-# Install dependencies
+```bash
 pip install torch==1.10.1 torchvision==0.11.2 torchaudio==0.10.1
-pip install opencv-python numpy scipy matplotlib moviepy tqdm pandas requests
+pip install opencv-python numpy scipy matplotlib moviepy tqdm requests pandas
 pip install librosa==0.8.1
 ```
 
 ---
 
-## 🏁 How to Run
+## ▶️ Usage
 
-Make sure the model checkpoint `wav2lip_gan.pth` is in `Wav2Lip/checkpoints/`.
-
-Then run:
+Once everything is set up, run the following command:
 
 ```bash
 python Wav2Lip/inference.py \
@@ -67,45 +72,40 @@ python Wav2Lip/inference.py \
   --outfile output_video.mp4
 ```
 
+You can also run it from Python using `subprocess`:
+
+```python
+import subprocess
+
+subprocess.run([
+    "python", "Wav2Lip/inference.py",
+    "--checkpoint_path", "Wav2Lip/checkpoints/wav2lip_gan.pth",
+    "--face", "input_video.mp4",
+    "--audio", "new_audio.wav",
+    "--outfile", "output_video.mp4"
+])
+```
+
 ---
 
-## 📌 Assumptions & Constraints
+## 📄 Paragraphs Used
 
-- Lip sync accuracy depends on clarity of the face and audio.
-- You must speak Paragraph A and B with relatively similar expressions and head movements.
-- `input_video.mp4` should contain a clear frontal view of your face.
-
----
-
-## 📖 Paragraphs Used
-
-**Paragraph A**  
+**Paragraph A** (Original video):
 > Today, I’m going to show you how machine learning can transform everyday tasks. Whether it’s identifying objects in images or generating text from scratch, the possibilities are truly endless. Let’s dive into some amazing examples together.
 
-**Paragraph B**  
+**Paragraph B** (New audio):
 > The quick brown fox jumps over the lazy dog while a curious cat watches from the rooftop. Suddenly, a loud bark sends the animals running in every direction — pure chaos ensues.
 
 ---
 
-## ✅ Output
+## 📌 Notes and Assumptions
 
-- `output_video.mp4` will have your face from the original video,
-- your new voice from `new_audio.wav`,
-- and lip movements synced naturally.
-
----
-
-## 🔗 Credits
-
-- [Wav2Lip (Original GitHub)](https://github.com/Rudrabha/Wav2Lip)
-- OpenCV, Librosa, PyTorch, MoviePy, FFmpeg
+- We use the original [Wav2Lip](https://github.com/Rudrabha/Wav2Lip) repo because it includes all the custom modules (GAN enhancements, mel processing, etc.) needed for high-fidelity results.
+- `wav2lipy` was avoided due to its dependency on outdated versions of PyTorch (`==1.1.0`) which conflict with modern Python.
+- This project assumes the speaker identity, lighting, and pose stay reasonably stable between the original and modified video.
 
 ---
 
-## 🛠 Troubleshooting
+## 🧠 Acknowledgements
 
-- ❌ `No module named 'cv2'` → Run: `pip install opencv-python`
-- ❌ `librosa mel() error` → Use: `librosa==0.8.1`
-- ❌ Environment issues → Delete and recreate `wav2lipenv`
-
----
+- [Wav2Lip: Accurate Lip-syncing for Speech to Lip Generation](https://github.com/Rudrabha/Wav2Lip)
